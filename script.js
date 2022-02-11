@@ -1,10 +1,12 @@
-console.log('flappy bird Js');
-
+const canvas = document.querySelector('canvas');
+const context = canvas.getContext('2d');
+//
+// ####SPRITES####
+//
 const sprites = new Image();
 sprites.src = "./img/sprites.png";
 
-const canvas = document.querySelector('canvas');
-const context = canvas.getContext('2d');
+
 
 const planoDeFundo = {
     spriteX: 390,
@@ -31,6 +33,24 @@ const planoDeFundo = {
             planoDeFundo.largura, planoDeFundo.altura, //solo image w and h
             (planoDeFundo.drawCanvaX + planoDeFundo.largura), planoDeFundo.drawCanvaY, //image cord in canvas
             planoDeFundo.largura, planoDeFundo.altura, //size image in canvas
+        );
+    },                                                                                                                               
+};
+
+const menuStart = {
+    spriteX: 134,
+    spriteY: 0,
+    largura: 174,
+    altura: 152,
+    drawCanvaX: (canvas.width / 2) - 174 / 2,
+    drawCanvaY: 50,
+    draw() {
+        context.drawImage(
+            sprites, //sprite image
+            menuStart.spriteX, menuStart.spriteY, //image x and y
+            menuStart.largura, menuStart.altura, //solo image w and h
+            menuStart.drawCanvaX, menuStart.drawCanvaY, //image cord in canvas
+            menuStart.largura, menuStart.altura, //size image in canvas
         );
     },                                                                                                                               
 };
@@ -70,6 +90,12 @@ const flappyBird = {
     altura: 24,
     drawCanvaX: 10,
     drawCanvaY: 50,
+    gravidade: 0.25,
+    veloc: 0,
+    update() {
+        flappyBird.veloc = flappyBird.veloc + flappyBird.gravidade;
+        flappyBird.drawCanvaY = flappyBird.drawCanvaY + flappyBird.veloc; 
+    },
     draw() {
         context.drawImage (
             sprites, //sprite image
@@ -81,12 +107,59 @@ const flappyBird = {
     },
 };
 
+//
+// ####SCREENS####
+//
+let telaAtiva = {};
+function switchTela(novaTela) {
+    telaAtiva = novaTela;
+};
+
+const Telas = {
+    START: {
+        draw() {
+            planoDeFundo.draw();
+            chao.draw();
+            flappyBird.draw();
+            menuStart.draw();
+        },
+        click() {
+            switchTela(Telas.JOGO);
+        },
+        update() {
+
+        }
+    },
+};
+
+Telas.JOGO = {
+    draw() {
+        planoDeFundo.draw();
+        chao.draw();
+        flappyBird.draw();
+    },
+    update() {
+        flappyBird.update();
+    }
+};
+//
+// ####LOOP####
+//
 function loop() {
-    planoDeFundo.draw();
-    chao.draw();
-    flappyBird.draw();
+    
+    telaAtiva.draw();
+    telaAtiva.update();
 
     requestAnimationFrame(loop);
 };
 
+
+window.addEventListener('click', function() {
+    if(telaAtiva.click) {
+        telaAtiva.click();
+    }
+});
+
+
+switchTela(Telas.START);
 loop();  
