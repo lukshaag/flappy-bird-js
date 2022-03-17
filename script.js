@@ -316,7 +316,7 @@ function criaPlacar() {
 
 
 //
-// [TELAS]
+// [TELAS] 
 //
 const globais = {};
 let telaAtiva = {};
