@@ -101,8 +101,6 @@ function criaChao() {
         return chao;
     }
     
-
-    
     function fazColisao() {
         const flappyBirdY = globais.flappyBird.y + globais.flappyBird.altura;
     const chaoY = globais.chao.y;
@@ -112,7 +110,7 @@ function criaChao() {
     };
 
     return false;
-};
+}
 //
 // [FLAPPYBIRD]
 //
@@ -277,6 +275,25 @@ function criaCanos() {
     return canos;
 }
 
+function criaPlacar() {
+    const placar = {
+        pontuaçao: 0,
+        draw() {
+            context.font = '20px "VT323"';
+            context.fillStyle = 'white';
+            context.fillText(`${placar.pontuaçao}`, 220, 35);
+        },
+        atualiza() {
+            const intervaloDeFrames = 10;
+            const passouOIntervalo = frames % intervaloDeFrames === 0;
+
+            if(passouOIntervalo) {
+                placar.pontuaçao = placar.pontuaçao + 1;
+            }
+        }
+    }
+    return placar;
+}
 //
 // [TELAS]
 //
@@ -314,11 +331,15 @@ const Telas = {
 };
 
 Telas.JOGO = {
+    inicializa() {
+        globais.placar = criaPlacar();
+    },
     draw() {
         planoDeFundo.draw();
         globais.canos.draw();
         globais.chao.draw();
         globais.flappyBird.draw();
+        globais.placar.draw();
     },
     click() {
         globais.flappyBird.Pula();
@@ -328,6 +349,7 @@ Telas.JOGO = {
         globais.chao.atualiza();
         globais.canos.atualiza()
         globais.flappyBird.atualiza();
+        globais.placar.atualiza();
     }
 };
 //
@@ -349,6 +371,11 @@ window.addEventListener('click', function() {
     }
 });
 
+window.addEventListener('keydown', function(e) {
+    if (telaAtiva.click && !e.repeat && e.code === 'Space') {
+      telaAtiva.click();
+    }
+  });
 
 switchTela(Telas.START);
 loop();  
